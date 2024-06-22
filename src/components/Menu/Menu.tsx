@@ -13,8 +13,8 @@ import SettingIcon from '@icon/SettingIcon';
 import PersonIcon from '@icon/PersonIcon';
 
 const logoUrl = 'https://gptmeet.vercel.app/images/h-logo-2-p-500.png';
-const solLogoUrl = 'https://cryptologos.cc/logos/solana-sol-logo.png'; // Replace with the actual URL of the SOL logo
-const meetLogoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Meet_icon_%282020%29.svg/2491px-Google_Meet_icon_%282020%29.svg.png'; // Replace with the actual URL of the MEET logo
+const solLogoUrl = 'https://cryptologos.cc/logos/solana-sol-logo.png';
+const meetLogoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Meet_icon_%282020%29.svg/2491px-Google_Meet_icon_%282020%29.svg.png';
 
 const Menu = () => {
   const hideSideMenu = useStore((state) => state.hideSideMenu);
@@ -39,7 +39,6 @@ const Menu = () => {
   }, []);
 
   const handleConnectWallet = () => {
-    // Implement your wallet connection logic here
     alert('Connect Wallet button clicked');
   };
 
@@ -72,7 +71,7 @@ const Menu = () => {
               </button>
               <div className="mt-4 bg-gray-800 p-2 rounded-md flex items-center gap-2">
                 <div className="bg-purple-600 p-1 rounded-full">
-                  <PersonIcon className="w-5 h-5 text-white" />
+                  <PersonIcon  />
                 </div>
                 <div className="flex-1">
                   <div className="text-white text-sm">Me</div>
