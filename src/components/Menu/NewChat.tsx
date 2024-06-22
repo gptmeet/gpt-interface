@@ -13,13 +13,13 @@ const NewChat = ({ folder }: { folder?: string }) => {
 
   return (
     <a
-      className={`flex flex-1 items-center rounded-md hover:bg-gray-500/10 transition-all duration-200 text-white text-sm flex-shrink-0 ${
+      className={`flex flex-1 items-center rounded-md hover:bg-purple-500/10 transition-all duration-200 text-white text-sm flex-shrink-0 ${
         generating
           ? 'cursor-not-allowed opacity-40'
           : 'cursor-pointer opacity-100'
       } ${
-        folder ? 'justify-start' : 'py-2 px-2 gap-3 mb-2 border border-white/20'
-      }`}
+        folder ? 'justify-start' : 'py-2 px-2 gap-3 mb-2 border border-purple-500/20'
+      } bg-purple-700 hover:bg-purple-800`}
       onClick={() => {
         if (!generating) addChat(folder);
       }}
