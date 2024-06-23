@@ -26,6 +26,8 @@ const Menu = () => {
   const [solUsdValue, setSolUsdValue] = useState('0.00');
   const [meetBalance, setMeetBalance] = useState('0.00');
   const [meetUsdValue, setMeetUsdValue] = useState('0.00');
+  const [maxApproval, setMaxApproval] = useState('1000');
+  const [inputApproval, setInputApproval] = useState('');
 
   useEffect(() => {
     if (window.innerWidth < 768) setHideSideMenu(true);
@@ -47,6 +49,11 @@ const Menu = () => {
     alert('Wallet address copied to clipboard');
   };
 
+  const handleSetApproval = () => {
+    setMaxApproval(inputApproval);
+    alert(`Max approval set to: ${inputApproval}`);
+  };
+
   return (
     <>
       <div
@@ -64,15 +71,16 @@ const Menu = () => {
               </div>
               <ChatHistoryList />
               <button
-                className='mt-2 py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-md transition-all duration-200'
+                className='btn-primary'
                 onClick={handleConnectWallet}
               >
                 Connect Wallet
               </button>
               <div className="mt-4 bg-gray-800 p-2 rounded-md flex items-center gap-2">
-                <div className="bg-purple-600 p-1 rounded-full">
-                  <PersonIcon  />
+                <div className="bg-purple-600 p-1 rounded-full text-white flex items-center justify-center bg-purple-600">
+                  <PersonIcon />
                 </div>
+
                 <div className="flex-1">
                   <div className="text-white text-sm">Me</div>
                   <div className="text-gray-400 text-xs cursor-pointer" onClick={handleCopyAddress}>
@@ -105,6 +113,23 @@ const Menu = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                   </a>
+                </div>
+              </div>
+              <div className="mt-4 bg-gray-800 p-2 rounded-md">
+                <div className="text-white mb-2">Max Approved: <span className="text-purple-500 font-bold">{maxApproval}</span></div>
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="number"
+                    className="text-gray-800 dark:text-white p-2 text-sm bg-transparent disabled:opacity-40 disabled:cursor-not-allowed transition-opacity m-0 w-full h-full focus:outline-none rounded border border-white/20"
+                    value={inputApproval}
+                    onChange={(e) => setInputApproval(e.target.value)}
+                  />
+                  <button
+                    className="btn-primary"
+                    onClick={handleSetApproval}
+                  >
+                    Set Approval
+                  </button>
                 </div>
               </div>
               <MenuOptions />

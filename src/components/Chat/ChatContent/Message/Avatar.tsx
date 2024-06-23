@@ -16,18 +16,18 @@ const Avatar = React.memo(({ role }: { role: Role }) => {
 const UserAvatar = () => {
   return (
     <div
-      className='relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center'
-      style={{ backgroundColor: 'rgb(200, 70, 70)' }}
+      className='relative h-[30px] w-[30px] p-1 rounded-full text-white flex items-center justify-center bg-purple-600 '
     >
       <PersonIcon />
     </div>
+
   );
 };
 
 const AssistantAvatar = () => {
   return (
     <div
-      className='relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center'
+      className='relative h-[30px] w-[30px] p-1 rounded-full text-white flex items-center justify-center'
       style={{ backgroundColor: 'rgb(16, 163, 127)' }}
     >
       <svg
@@ -51,7 +51,7 @@ const AssistantAvatar = () => {
 const SystemAvatar = () => {
   return (
     <div
-      className='relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center'
+      className='relative h-[30px] w-[30px] p-1 rounded-full text-white flex items-center justify-center'
       style={{ backgroundColor: 'rgb(126, 163, 227)' }}
     >
       <SettingIcon />

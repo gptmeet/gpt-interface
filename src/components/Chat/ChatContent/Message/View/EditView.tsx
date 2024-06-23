@@ -185,7 +185,7 @@ const EditViewButtons = memo(
         <div className='flex-1 text-center mt-2 flex justify-center'>
           {sticky && (
             <button
-              className={`btn relative mr-2 btn-primary ${
+              className={`mr-2 btn-primary p-2 ${
                 generating ? 'cursor-not-allowed opacity-40' : ''
               }`}
               onClick={handleGenerate}

@@ -192,14 +192,24 @@
   .btn-primary {
     --tw-bg-opacity: 1;
     --tw-text-opacity: 1;
-    background-color: rgb(126 34 206 / var(--tw-bg-opacity));
+    background: linear-gradient(90deg, #9945ff, #7439ffb0, #9830eca1);
+    background-size: 200% 200%;
     color: rgba(255, 255, 255, var(--tw-text-opacity));
+    transition: background-position 0.5s ease;
+    border-radius: 10px;
+    /* font-weight: bold; */
+    padding: 5px 10px;
+    display: inline-block;
   }
-
+  
   .btn-primary:hover {
     --tw-bg-opacity: 1;
-    background-color: rgb(126 34 200 / var(--tw-bg-opacity));
+    background-position: 100% 0;
+    border-radius: 10px;
+    color: #ffffff;
   }
+  
+  
 
   .btn-small {
     padding: 0.25rem 0.5rem;
