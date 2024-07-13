@@ -1,26 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useStore from '@store/store';
 
 import ChatContent from './ChatContent';
 import MobileBar from '../MobileBar';
 import StopGeneratingButton from '@components/StopGeneratingButton/StopGeneratingButton';
-
-const Accordion = ({ title, children }: { title: string; children: React.ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="accordion-item mb-2">
-      <div
-        className="accordion-header cursor-pointer flex justify-between items-center p-2 rounded-md bg-[linear-gradient(90deg,#9945ff,#7439ffb0,#9830eca1)]"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span className="text-white text-sm">{title}</span>
-        <span className="text-white">{isOpen ? '▲' : '▼'}</span>
-      </div>
-      {isOpen && <div className="accordion-content p-2 bg-[linear-gradient(90deg,#9945ff,#7439ffb0,#9830eca1)] rounded-md">{children}</div>}
-    </div>
-  );
-};
 
 const MeetingBox = ({ title }: { title: string }) => {
   const imageUrl = 'https://img.freepik.com/free-vector/colorful-equalizer-wave-wallpaper_23-2148410358.jpg';
@@ -49,18 +32,11 @@ const MeetingBox = ({ title }: { title: string }) => {
 
 const Chat = () => {
   const hideSideMenu = useStore((state) => state.hideSideMenu);
-
+  
   return (
     <div className={`flex h-full flex-1 flex-col ${hideSideMenu ? 'md:pl-0' : 'md:pl-[260px]'}`}>
       <MobileBar />
       <main className="relative h-full w-full transition-width flex flex-col overflow-hidden items-stretch flex-1">
-        <Accordion title="Meeting Information">
-          <div className="flex flex-wrap justify-center gap-2 mt-2">
-            <MeetingBox title="Companion" />
-            <MeetingBox title="Me" />
-            <MeetingBox title="My Screen" />
-          </div>
-        </Accordion>
         <ChatContent />
         <StopGeneratingButton />
       </main>

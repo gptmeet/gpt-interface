@@ -10,14 +10,17 @@ const Config = () => {
 
   return (
     <>
-      <a
-        className='flex py-2 px-2 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm'
+      <button
+        className='btn btn-neutral'
         id='api-menu'
         onClick={() => setIsModalOpen(true)}
       >
-        <PersonIcon />
-        {t('api')}
-      </a>
+        <div className="flex items-center gap-3">
+          <PersonIcon />
+          <span>{t('api')}</span>
+        </div>
+      </button>
+
       {isModalOpen && <ApiMenu setIsModalOpen={setIsModalOpen} />}
     </>
   );

@@ -32,9 +32,12 @@ const TokenCount = React.memo(() => {
   }, [messages, generating]);
 
   return (
-    <div className='absolute top-[-16px] right-0'>
+    <div className='absolute top-[-16px] right-0 flex space-x-4'>
       <div className='text-xs italic text-gray-900 dark:text-gray-300'>
-        Tokens: {tokenCount} (${cost})
+        $MEET Tokens: {tokenCount} / {tokenCount} (${cost})
+      </div>
+      <div className='text-xs italic text-gray-900 dark:text-gray-300'>
+        API Tokens: {tokenCount} / {tokenCount} (${cost})
       </div>
     </div>
   );

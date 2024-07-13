@@ -17,6 +17,11 @@ import EnterToSubmitToggle from './EnterToSubmitToggle';
 import TotalTokenCost, { TotalTokenCostToggle } from './TotalTokenCost';
 import ClearConversation from '@components/Menu/MenuOptions/ClearConversation';
 
+import Api from './Api';
+import Me from './Me';
+import AboutMenu from '@components/AboutMenu';
+import ImportExportChat from '@components/ImportExportChat';
+
 const SettingsMenu = () => {
   const { t } = useTranslation();
 
@@ -34,7 +39,7 @@ const SettingsMenu = () => {
           setIsModalOpen(true);
         }}
       >
-        <SettingIcon className='w-4 h-4' /> {t('setting') as string}
+        <SettingIcon className='w-4 h-4' />
       </a>
       {isModalOpen && (
         <PopupModal
@@ -56,6 +61,12 @@ const SettingsMenu = () => {
             <PromptLibraryMenu />
             <ChatConfigMenu />
             <TotalTokenCost />
+
+            <Api />
+            <ImportExportChat />
+            {/* <AboutMenu /> */}
+            {/* <Me /> */}
+
           </div>
         </PopupModal>
       )}

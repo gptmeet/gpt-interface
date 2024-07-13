@@ -21,13 +21,6 @@ const Menu = () => {
   const setHideSideMenu = useStore((state) => state.setHideSideMenu);
 
   const windowWidthRef = useRef<number>(window.innerWidth);
-  const [walletAddress, setWalletAddress] = useState('Qric...D5KD');
-  const [solBalance, setSolBalance] = useState('0.00');
-  const [solUsdValue, setSolUsdValue] = useState('0.00');
-  const [meetBalance, setMeetBalance] = useState('0.00');
-  const [meetUsdValue, setMeetUsdValue] = useState('0.00');
-  const [maxApproval, setMaxApproval] = useState('1000');
-  const [inputApproval, setInputApproval] = useState('');
 
   useEffect(() => {
     if (window.innerWidth < 768) setHideSideMenu(true);
@@ -40,19 +33,6 @@ const Menu = () => {
     });
   }, []);
 
-  const handleConnectWallet = () => {
-    alert('Connect Wallet button clicked');
-  };
-
-  const handleCopyAddress = () => {
-    navigator.clipboard.writeText(walletAddress);
-    alert('Wallet address copied to clipboard');
-  };
-
-  const handleSetApproval = () => {
-    setMaxApproval(inputApproval);
-    alert(`Max approval set to: ${inputApproval}`);
-  };
 
   return (
     <>
@@ -70,68 +50,6 @@ const Menu = () => {
                 <NewFolder />
               </div>
               <ChatHistoryList />
-              <button
-                className='btn-primary'
-                onClick={handleConnectWallet}
-              >
-                Connect Wallet
-              </button>
-              <div className="mt-4 bg-gray-800 p-2 rounded-md flex items-center gap-2">
-                <div className="bg-purple-600 p-1 rounded-full text-white flex items-center justify-center bg-purple-600">
-                  <PersonIcon />
-                </div>
-
-                <div className="flex-1">
-                  <div className="text-white text-sm">Me</div>
-                  <div className="text-gray-400 text-xs cursor-pointer" onClick={handleCopyAddress}>
-                    {walletAddress}
-                  </div>
-                </div>
-                <SettingIcon className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
-              </div>
-              <div className="mt-4 bg-gray-800 p-2 rounded-md">
-                <div className="flex items-center gap-2">
-                  <img src={solLogoUrl} alt="SOL Logo" className="w-5 h-5" />
-                  <div className="flex-1">
-                    <div className="text-white text-sm">{solBalance} $SOL</div>
-                    <div className="text-gray-400 text-xs">${solUsdValue}</div>
-                  </div>
-                  <a href="https://jup.ag" target="_blank" rel="noopener noreferrer">
-                    <svg className="w-4 h-4 text-gray-400 hover:text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                  </a>
-                </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <img src={meetLogoUrl} alt="MEET Logo" className="w-5 h-5" />
-                  <div className="flex-1">
-                    <div className="text-white text-sm">{meetBalance} $MEET</div>
-                    <div className="text-gray-400 text-xs">${meetUsdValue}</div>
-                  </div>
-                  <a href="https://jup.ag" target="_blank" rel="noopener noreferrer">
-                    <svg className="w-4 h-4 text-gray-400 hover:text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-              <div className="mt-4 bg-gray-800 p-2 rounded-md">
-                <div className="text-white mb-2">Max Approved: <span className="text-purple-500 font-bold">{maxApproval}</span></div>
-                <div className="flex flex-col gap-2">
-                  <input
-                    type="number"
-                    className="text-gray-800 dark:text-white p-2 text-sm bg-transparent disabled:opacity-40 disabled:cursor-not-allowed transition-opacity m-0 w-full h-full focus:outline-none rounded border border-white/20"
-                    value={inputApproval}
-                    onChange={(e) => setInputApproval(e.target.value)}
-                  />
-                  <button
-                    className="btn-primary"
-                    onClick={handleSetApproval}
-                  >
-                    Set Approval
-                  </button>
-                </div>
-              </div>
               <MenuOptions />
             </nav>
           </div>

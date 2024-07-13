@@ -7,13 +7,16 @@ const Me = () => {
   const { t } = useTranslation();
   return (
     <a
-      className='flex py-2 px-2 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm'
+      className='btn btn-neutral'
       href='https://github.com/ztjhz/BetterChatGPT'
       target='_blank'
     >
-      <HeartIcon />
-      {t('author')}
+      <div className="flex items-center gap-3">
+        <HeartIcon />
+        <span>{t('author')}</span>
+      </div>
     </a>
+
   );
 };
 
