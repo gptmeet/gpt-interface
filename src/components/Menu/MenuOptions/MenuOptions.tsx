@@ -80,6 +80,7 @@ const MenuOptions = () => {
             <div className="flex-1">
               <div className="text-white text-xs">{meetBalance} $MEET</div>
               <div className="text-gray-500 text-xs">${meetUsdValue}</div>
+              <div className="text-gray-500 text-xs">1 $MEET = 200,000 API Token</div>
             </div>
             <a href="https://jup.ag" target="_blank" rel="noopener noreferrer">
               <svg className="w-4 h-4 text-gray-400 hover:text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
