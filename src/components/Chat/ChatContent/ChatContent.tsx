@@ -59,14 +59,16 @@ const ChatContent = () => {
             className='flex flex-col items-center text-sm dark:bg-gray-800 w-full'
             ref={saveRef}
           >
-            {advancedMode && (
+            {/* Commenting out ChatTitle */}
+            {/* {advancedMode && (
               <div className='sticky top-0 z-50 w-full'>
                 <ChatTitle />
               </div>
-            )}
-            {!generating && advancedMode && messages?.length === 0 && (
+            )} */}
+            {/* Commenting out NewMessageButton */}
+            {/* {!generating && advancedMode && messages?.length === 0 && (
               <NewMessageButton messageIndex={-1} />
-            )}
+            )} */}
             {messages?.map((message, index) => (
               (advancedMode || index !== 0 || message.role !== 'system') && (
                 <React.Fragment key={index}>
@@ -75,7 +77,8 @@ const ChatContent = () => {
                     content={message.content}
                     messageIndex={index}
                   />
-                  {!generating && advancedMode && <NewMessageButton messageIndex={index} />}
+                  {/* Commenting out NewMessageButton between messages */}
+                  {/* {!generating && advancedMode && <NewMessageButton messageIndex={index} />} */}
                 </React.Fragment>
               )
             ))}

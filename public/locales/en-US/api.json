@@ -11,5 +11,6 @@
   },
   "customEndpoint": "Use custom API endpoint",
   "advancedConfig": "View advanced API configuration <0>here</0>",
-  "noApiKeyWarning": "No API key supplied! Please check your API settings."
+  "noApiKeyWarning": "No API key supplied! Please check your API settings.",
+  "resetToDefault": "Reset to Default API Key"
 }

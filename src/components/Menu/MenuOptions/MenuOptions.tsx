@@ -21,8 +21,9 @@ const MenuOptions = () => {
   const [solUsdValue, setSolUsdValue] = useState('0.00');
   const [meetBalance, setMeetBalance] = useState('0.00');
   const [meetUsdValue, setMeetUsdValue] = useState('0.00');
-  const [maxApproval, setMaxApproval] = useState('1000');
-  const [inputApproval, setInputApproval] = useState('');
+  const [creditBalance, setCreditBalance] = useState('0');
+  const [paymentToken, setPaymentToken] = useState<'SOL' | 'MEET'>('SOL');
+  const [creditAmount, setCreditAmount] = useState<string>('');
 
   const handleConnectWallet = () => {
     alert('Connect Wallet button clicked');
@@ -33,9 +34,19 @@ const MenuOptions = () => {
     alert('Wallet address copied to clipboard');
   };
 
-  const handleSetApproval = () => {
-    setMaxApproval(inputApproval);
-    alert(`Max approval set to: ${inputApproval}`);
+  const handleBuyCredits = () => {
+    alert(`Buy credits with ${paymentToken}`);
+  };
+
+  const togglePaymentToken = () => {
+    setPaymentToken(prev => prev === 'SOL' ? 'MEET' : 'SOL');
+  };
+
+  const handleCreditAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (!value || Number(value) >= 0) {
+      setCreditAmount(value);
+    }
   };
 
   return (
@@ -80,7 +91,7 @@ const MenuOptions = () => {
             <div className="flex-1">
               <div className="text-white text-xs">{meetBalance} $MEET</div>
               <div className="text-gray-500 text-xs">${meetUsdValue}</div>
-              <div className="text-gray-500 text-xs">1 $MEET = 200,000 API Token</div>
+              <div className="text-gray-500 text-xs">1 $MEET = 200,000 API Credits</div>
             </div>
             <a href="https://jup.ag" target="_blank" rel="noopener noreferrer">
               <svg className="w-4 h-4 text-gray-400 hover:text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -91,20 +102,55 @@ const MenuOptions = () => {
         </div>
 
         <div className="bg-gray-800 p-2 rounded-md mb-2">
-          <div className="flex items-center text-white text-xs mb-1 space-x-4">
-            <div>Approved: <span className="text-purple-500 font-bold">{maxApproval}</span></div>
-            <div>Used: <span className="text-purple-500 font-bold">{maxApproval}</span></div>
-            <div>Left: <span className="text-purple-500 font-bold">{maxApproval}</span></div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-white text-xs">Credit Balance:</div>
+            <div className="text-purple-500 font-bold text-xs">{creditBalance} Credits</div>
           </div>
-          <div className="flex flex-col gap-2 mt-2">
-            <input
-              type="number"
-              className="text-gray-800 dark:text-white p-2 text-xs bg-transparent disabled:opacity-40 disabled:cursor-not-allowed transition-opacity m-0 w-full h-full focus:outline-none rounded border border-white/20"
-              value={inputApproval}
-              onChange={(e) => setInputApproval(e.target.value)}
-            />
-            <button className="btn-primary" onClick={handleSetApproval}>
-              Set Approval
+          
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between bg-gray-700 p-2 rounded">
+              <span className="text-white text-xs">Pay with:</span>
+              <button 
+                onClick={togglePaymentToken}
+                className="flex items-center gap-2 bg-gray-600 px-3 py-1 rounded hover:bg-gray-500"
+              >
+                <img 
+                  src={paymentToken === 'SOL' ? solLogoUrl : meetLogoUrl} 
+                  alt={`${paymentToken} Logo`} 
+                  className="w-4 h-4"
+                />
+                <span className="text-white text-xs">${paymentToken}</span>
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-white text-xs">Amount of Credits:</label>
+              <input
+                type="number"
+                className="text-gray-800 dark:text-white p-2 text-xs bg-transparent disabled:opacity-40 disabled:cursor-not-allowed transition-opacity m-0 w-full h-full focus:outline-none rounded border border-white/20"
+                value={creditAmount}
+                onChange={handleCreditAmountChange}
+                placeholder="Enter amount of credits"
+                min="0"
+              />
+              {paymentToken === 'MEET' && (
+                <div className="text-gray-500 text-xs">
+                  ≈ {(Number(creditAmount || 0) / 200000).toFixed(4)} $MEET
+                </div>
+              )}
+              {paymentToken === 'SOL' && (
+                <div className="text-gray-500 text-xs">
+                  ≈ {(Number(creditAmount || 0) * 0.000001).toFixed(4)} $SOL
+                </div>
+              )}
+            </div>
+            
+            <button 
+              className="btn-primary flex items-center justify-center gap-2" 
+              onClick={handleBuyCredits}
+              disabled={!creditAmount || Number(creditAmount) <= 0}
+            >
+              <span>Buy {creditAmount || '0'} Credits with {paymentToken}</span>
             </button>
           </div>
         </div>

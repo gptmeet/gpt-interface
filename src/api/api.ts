@@ -2,6 +2,17 @@ import { ShareGPTSubmitBodyInterface } from '@type/api';
 import { ConfigInterface, MessageInterface, ModelOptions } from '@type/chat';
 import { isAzureEndpoint } from '@utils/api';
 
+console.log('API Key:', import.meta.env.VITE_OPENAI_API_KEY);
+
+const DEFAULT_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
+
+export const getApiKey = (): string => {
+  const userApiKey = localStorage.getItem('apiKey');
+  if (userApiKey) return userApiKey;
+  
+  return DEFAULT_API_KEY;
+};
+
 export const getChatCompletion = async (
   endpoint: string,
   messages: MessageInterface[],

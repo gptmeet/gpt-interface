@@ -62,7 +62,7 @@ const SettingsMenu = () => {
             <ChatConfigMenu />
             <TotalTokenCost />
 
-            <Api />
+            {/* <Api /> */}
             <ImportExportChat />
             {/* <AboutMenu /> */}
             {/* <Me /> */}
