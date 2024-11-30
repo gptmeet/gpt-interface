@@ -3,6 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Connection, PublicKey, LAMPORTS_PER_SOL, Transaction, SystemProgram } from '@solana/web3.js';
 import useStore from '@store/store';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 import CollapseOptions from './CollapseOptions';
 import GoogleSync from '@components/GoogleSync';
@@ -15,8 +16,10 @@ const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || undefined;
 const solLogoUrl = 'https://cryptologos.cc/logos/solana-sol-logo.png';
 const meetLogoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Meet_icon_%282020%29.svg/2491px-Google_Meet_icon_%282020%29.svg.png';
 
-const RAY_TOKEN_ADDRESS = 'RAY_TOKEN_ADDRESS'; // Replace with actual RAY token address
-const SOLANA_RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+const PUMP_TOKEN_ADDRESS = 'FYxjUUkwTCaVyzm4a7qKpcvKo214agKpXkZx3yYbpump';
+const PUMP_DECIMALS = 9; // Most tokens use 9 decimals like SOL
+
+const SOLANA_RPC_ENDPOINT = 'https://mainnet.helius-rpc.com/?api-key=2edbde94-3a6c-473b-8e98-4140ff47e9cd';
 
 const TREASURY_ADDRESS = 'E8LxfzHutmXWwnaJhP1fqHJmpCWuJgamZptex38zrjLq';
 
@@ -43,13 +46,20 @@ const MenuOptions = () => {
   const { publicKey, connected } = wallet;
   
   // Initialize connection only if needed
-  const connection = connected ? new Connection(SOLANA_RPC_ENDPOINT) : null;
+  const connection = connected ? new Connection(
+    SOLANA_RPC_ENDPOINT,
+    { 
+      commitment: 'confirmed',
+      wsEndpoint: 'wss://api.mainnet-beta.solana.com/',
+      confirmTransactionInitialTimeout: 60000
+    }
+  ) : null;
 
   const [walletAddress, setWalletAddress] = useState('Connect Wallet');
   const [solBalance, setSolBalance] = useState('0.00');
   const [solUsdValue, setSolUsdValue] = useState('0.00');
-  const [rayBalance, setRayBalance] = useState('0.00');
-  const [rayUsdValue, setRayUsdValue] = useState('0.00');
+  const [pumpBalance, setPumpBalance] = useState('0.00');
+  const [pumpUsdValue, setPumpUsdValue] = useState('0.00');
   const [paymentToken, setPaymentToken] = useState<'SOL' | 'RAY'>('SOL');
   const [creditBalance, setCreditBalance] = useState('0');
   const [creditAmount, setCreditAmount] = useState<string>('');
@@ -65,20 +75,28 @@ const MenuOptions = () => {
   };
 
   useEffect(() => {
-    const provider = getPhantomProvider();
-    if (!provider) return;
+    if (!connected || !publicKey || !connection) return;
 
-    const fetchBalance = async () => {
+    const fetchBalances = async () => {
       try {
-        // Get the connected wallet's public key
-        const resp = await provider.connect();
-        const publicKey = resp.publicKey.toString();
-        
-        // Create connection
-        const connection = new Connection(SOLANA_RPC_ENDPOINT);
-        
-        // Get balance
-        const balance = await connection.getBalance(new PublicKey(publicKey));
+        // Get balance with retry logic
+        let balance: number | undefined;
+        for (let i = 0; i < 3; i++) {
+          try {
+            balance = await connection.getBalance(publicKey, 'confirmed');
+            break;
+          } catch (error) {
+            console.error(`Attempt ${i + 1} failed:`, error);
+            if (i === 2) throw error;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+
+        // Check if balance was successfully fetched
+        if (typeof balance === 'undefined') {
+          throw new Error('Failed to fetch balance after retries');
+        }
+
         setSolBalance((balance / LAMPORTS_PER_SOL).toFixed(2));
         
         // Get SOL price
@@ -91,32 +109,49 @@ const MenuOptions = () => {
           console.error('Error fetching SOL price:', error);
           setSolUsdValue((balance / LAMPORTS_PER_SOL * 60).toFixed(2)); // Fallback price
         }
+
+        // Fetch PUMP token balance
+        try {
+          const tokenAccounts = await connection.getTokenAccountsByOwner(publicKey, {
+            mint: new PublicKey(PUMP_TOKEN_ADDRESS),
+          });
+
+          let tokenBalance = 0;
+          if (tokenAccounts.value.length > 0) {
+            const tokenAccount = tokenAccounts.value[0];
+            const accountInfo = await connection.getTokenAccountBalance(tokenAccount.pubkey);
+            tokenBalance = Number(accountInfo.value.uiAmount || 0);
+            
+            // Format large numbers with M/B suffix
+            if (tokenBalance >= 1_000_000) {
+              setPumpBalance((tokenBalance / 1_000_000).toFixed(2) + 'M');
+            } else if (tokenBalance >= 1_000) {
+              setPumpBalance((tokenBalance / 1_000).toFixed(2) + 'K');
+            } else {
+              setPumpBalance(tokenBalance.toFixed(2));
+            }
+          } else {
+            setPumpBalance('0.00');
+          }
+          setPumpUsdValue('N/A');
+        } catch (error) {
+          console.error('Error fetching PUMP balance:', error);
+          setPumpBalance('0.00');
+          setPumpUsdValue('N/A');
+        }
       } catch (err) {
-        console.error("Error connecting to Phantom:", err);
+        console.error("Error fetching balances:", err);
+        setSolBalance('0.00');
+        setSolUsdValue('0.00');
+        setPumpBalance('0.00');
+        setPumpUsdValue('N/A');
       }
     };
 
-    // Listen for wallet connection changes
-    provider.on("connect", async (publicKey: PublicKey) => {
-      console.log("Connected to wallet:", publicKey.toString());
-      fetchBalance();
-    });
-
-    provider.on("disconnect", () => {
-      console.log("Disconnected from wallet");
-      setSolBalance('0.00');
-      setSolUsdValue('0.00');
-    });
-
-    // Initial fetch if already connected
-    if (provider.isConnected) {
-      fetchBalance();
-    }
-
-    return () => {
-      provider.disconnect();
-    };
-  }, []);
+    fetchBalances();
+    const intervalId = setInterval(fetchBalances, 30000);
+    return () => clearInterval(intervalId);
+  }, [connected, publicKey, connection]);
 
   const connectWallet = async () => {
     const provider = getPhantomProvider();
@@ -206,11 +241,7 @@ const MenuOptions = () => {
         });
         
         console.log('Confirming transaction...');
-        const confirmation = await connection.confirmTransaction({
-          signature,
-          blockhash,
-          lastValidBlockHeight,
-        });
+        const confirmation = await connection.confirmTransaction(signature);
 
         if (confirmation.value.err) {
           throw new Error('Transaction failed: ' + JSON.stringify(confirmation.value.err));
@@ -276,10 +307,10 @@ const MenuOptions = () => {
                 </a>
               </div>
               <div className="flex items-center gap-2 mt-2">
-                <img src={meetLogoUrl} alt="RAY Logo" className="w-4 h-4" />
+                <img src={meetLogoUrl} alt="PUMP Logo" className="w-4 h-4" />
                 <div className="flex-1">
-                  <div className="text-white text-xs">{rayBalance} RAY</div>
-                  <div className="text-gray-500 text-xs">${rayUsdValue}</div>
+                  <div className="text-white text-xs">{pumpBalance} PUMP</div>
+                  <div className="text-gray-500 text-xs">{pumpUsdValue}</div>
                 </div>
                 <a href="https://jup.ag" target="_blank" rel="noopener noreferrer">
                   <svg className="w-4 h-4 text-gray-400 hover:text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
