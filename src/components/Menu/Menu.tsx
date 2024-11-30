@@ -9,12 +9,9 @@ import MenuOptions from './MenuOptions';
 import CrossIcon2 from '@icon/CrossIcon2';
 import DownArrow from '@icon/DownArrow';
 import MenuIcon from '@icon/MenuIcon';
-import SettingIcon from '@icon/SettingIcon';
-import PersonIcon from '@icon/PersonIcon';
+
 
 const logoUrl = 'https://gptmeet.vercel.app/images/h-logo-2-p-500.png';
-const solLogoUrl = 'https://cryptologos.cc/logos/solana-sol-logo.png';
-const meetLogoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Meet_icon_%282020%29.svg/2491px-Google_Meet_icon_%282020%29.svg.png';
 
 const Menu = () => {
   const hideSideMenu = useStore((state) => state.hideSideMenu);

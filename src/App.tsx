@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import useStore from '@store/store';
 import i18n from './i18n';
 
@@ -11,12 +11,35 @@ import { Theme } from '@type/theme';
 import ApiPopup from '@components/ApiPopup';
 import Toast from '@components/Toast';
 
+import {
+  ConnectionProvider,
+  WalletProvider,
+} from '@solana/wallet-adapter-react';
+import {
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+} from '@solana/wallet-adapter-wallets';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { clusterApiUrl } from '@solana/web3.js';
+
+// Import wallet adapter CSS using Vite's import syntax
+import '@solana/wallet-adapter-react-ui/styles.css';
+
 function App() {
   const initialiseNewChat = useInitialiseNewChat();
   const setChats = useStore((state) => state.setChats);
   const setTheme = useStore((state) => state.setTheme);
   const setApiKey = useStore((state) => state.setApiKey);
   const setCurrentChatIndex = useStore((state) => state.setCurrentChatIndex);
+
+  const endpoint = useMemo(() => clusterApiUrl('mainnet-beta'), []);
+  const wallets = useMemo(
+    () => [
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
+    ],
+    []
+  );
 
   useEffect(() => {
     document.documentElement.lang = i18n.language;
@@ -32,19 +55,16 @@ function App() {
     const theme = localStorage.getItem('theme');
 
     if (apiKey) {
-      // legacy local storage
       setApiKey(apiKey);
       localStorage.removeItem('apiKey');
     }
 
     if (theme) {
-      // legacy local storage
       setTheme(theme as Theme);
       localStorage.removeItem('theme');
     }
 
     if (oldChats) {
-      // legacy local storage
       try {
         const chats: ChatInterface[] = JSON.parse(oldChats);
         if (chats.length > 0) {
@@ -59,7 +79,6 @@ function App() {
       }
       localStorage.removeItem('chats');
     } else {
-      // existing local storage
       const chats = useStore.getState().chats;
       const currentChatIndex = useStore.getState().currentChatIndex;
       if (!chats || chats.length === 0) {
@@ -75,12 +94,18 @@ function App() {
   }, []);
 
   return (
-    <div className='overflow-hidden w-full h-full relative'>
-      <Menu />
-      <Chat />
-      <ApiPopup />
-      <Toast />
-    </div>
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>
+          <div className='overflow-hidden w-full h-full relative'>
+            <Menu />
+            <Chat />
+            <ApiPopup />
+            <Toast />
+          </div>
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   );
 }
 
