@@ -75,11 +75,13 @@ function App() {
   }, []);
 
   return (
-    <div className='overflow-hidden w-full h-full relative'>
-      <Menu />
-      <Chat />
-      <ApiPopup />
-      <Toast />
+    <div className="dark bg-gray-900 w-full h-full relative">
+      <div className="overflow-hidden w-full h-full bg-gray-900">
+        <Menu />
+        <Chat />
+        <ApiPopup />
+        <Toast />
+      </div>
     </div>
   );
 }

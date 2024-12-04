@@ -2,7 +2,6 @@ import { ShareGPTSubmitBodyInterface } from '@type/api';
 import { ConfigInterface, MessageInterface, ModelOptions } from '@type/chat';
 import { isAzureEndpoint } from '@utils/api';
 
-console.log('API Key:', import.meta.env.VITE_OPENAI_API_KEY);
 
 const DEFAULT_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
 

@@ -1,23 +1,13 @@
 import React from 'react';
 
-const SendIcon = () => {
-  return (
-    <svg
-      stroke='currentColor'
-      fill='none'
-      strokeWidth='2'
-      viewBox='0 0 24 24'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      className='h-4 w-4 mr-1'
-      height='1em'
-      width='1em'
-      xmlns='http://www.w3.org/2000/svg'
-    >
-      <line x1='22' y1='2' x2='11' y2='13'></line>
-      <polygon points='22 2 15 22 11 13 2 9 22 2'></polygon>
-    </svg>
-  );
-};
+const SendIcon = () => (
+  <svg 
+    className="w-5 h-5" 
+    viewBox="0 0 24 24"
+    fill="currentColor" 
+  >
+    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+  </svg>
+);
 
 export default SendIcon;

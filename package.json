@@ -57,6 +57,7 @@
     "lodash": "^4.17.21",
     "match-sorter": "^6.3.1",
     "papaparse": "^5.4.1",
+    "qrcode.react": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.2.0",
@@ -67,12 +68,14 @@
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
     "uuid": "^9.0.0",
+    "xrpl": "^4.0.0",
     "zustand": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.14.192",
     "@types/papaparse": "^5.3.7",
+    "@types/qrcode.react": "^1.0.5",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@types/react-scroll-to-bottom": "^4.2.0",
