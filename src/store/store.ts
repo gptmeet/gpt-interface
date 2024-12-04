@@ -75,6 +75,7 @@ const useStore = create<StoreState>()(
       name: 'free-chat-gpt',
       partialize: (state) => createPartializedState(state),
       version: 8,
+      //@ts-ignore
       migrate: (persistedState, version) => {
         switch (version) {
           case 0:
