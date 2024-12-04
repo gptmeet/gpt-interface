@@ -138,15 +138,20 @@ const ContentView = memo(
         <div className='flex justify-end gap-2 w-full mt-2'>
           {isDelete || (
             <>
+              {/* Commenting out refresh button
               {!useStore.getState().generating &&
                 role === 'assistant' &&
                 messageIndex === lastMessageIndex && (
                   <RefreshButton onClick={handleRefresh} />
-                )}
+              )}
+              */}
+              
+              {/* Commenting out up/down arrow buttons
               {messageIndex !== 0 && <UpButton onClick={handleMoveUp} />}
               {messageIndex !== lastMessageIndex && (
                 <DownButton onClick={handleMoveDown} />
               )}
+              */}
 
               <MarkdownModeButton />
               <CopyButton onClick={handleCopy} />
