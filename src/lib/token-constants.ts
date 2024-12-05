@@ -15,3 +15,10 @@ export const AIDA_USD_RATE = 0.1; // $0.10 per AIDA
 // Other token parameters
 export const DEFAULT_TRUSTLINE_LIMIT = '1000000000';
 export const MIN_XRP_FOR_TRUSTLINE = 11; // 10 XRP reserve + fees 
+
+// Token minimum balances
+export const MIN_XRP_BALANCE = 10;  // 10 XRP minimum
+export const MIN_AIDA_BALANCE = 100_000;  // 100,000 AIDA minimum
+
+// Treasury wallet for payments
+export const TREASURY_ADDRESS = 'rHkAMdizRuBm8N1qbJZaUk6uhFeBUAcARw';

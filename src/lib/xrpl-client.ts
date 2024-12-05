@@ -3,7 +3,8 @@ import {
   AIDA_ISSUER, 
   AIDA_CURRENCY,
   DEFAULT_TRUSTLINE_LIMIT,
-  MIN_XRP_FOR_TRUSTLINE 
+  MIN_XRP_FOR_TRUSTLINE,
+  TREASURY_ADDRESS
 } from './token-constants';
 
 interface TrustLine {
@@ -164,3 +165,49 @@ export const setupAidaTrustline = async (wallet: any) => {
     }
   }
 }; 
+
+export const deductXRP = async (amount: number, wallet: Wallet) => {
+  // Implement XRP payment to fee collection address
+};
+
+export const deductAIDA = async (amount: number, wallet: Wallet) => {
+  // Implement AIDA token payment to fee collection address
+};
+
+export const sendPayment = async (
+  wallet: Wallet,
+  amount: string,
+  isXRP: boolean = true
+) => {
+  const client = new Client('wss://xrplcluster.com/');
+  await client.connect();
+
+  try {
+    const payment = {
+      TransactionType: 'Payment',
+      Account: wallet.classicAddress,
+      Destination: TREASURY_ADDRESS,
+      Fee: '12',
+    };
+
+    if (isXRP) {
+      // XRP payment (amount in drops)
+      payment.Amount = String(Math.floor(Number(amount) * 1_000_000));
+    } else {
+      // AIDA payment
+      payment.Amount = {
+        currency: AIDA_CURRENCY,
+        value: amount,
+        issuer: AIDA_ISSUER
+      };
+    }
+
+    const prepared = await client.autofill(payment);
+    const signed = wallet.sign(prepared);
+    const result = await client.submitAndWait(signed.tx_blob);
+    
+    return result;
+  } finally {
+    await client.disconnect();
+  }
+};

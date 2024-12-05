@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import useStore from '@store/store';
 
@@ -9,6 +9,7 @@ import { ChatInterface } from '@type/chat';
 import PopupModal from '@components/PopupModal';
 import TokenCount from '@components/TokenCount';
 import CommandPrompt from '../CommandPrompt';
+import { MIN_XRP_BALANCE, MIN_AIDA_BALANCE } from '@lib/token-constants';
 
 const EditView = ({
   content,
@@ -27,7 +28,7 @@ const EditView = ({
 
   const [_content, _setContent] = useState<string>(content);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const textareaRef = React.createRef<HTMLTextAreaElement>();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { t } = useTranslation();
 
@@ -119,6 +120,19 @@ const EditView = ({
     }
   }, []);
 
+  const [hasEnoughBalance, setHasEnoughBalance] = useState(false);
+
+  // Get balances from store
+  const xrpBalance = useStore((state) => state.xrpBalance);
+  const aidaBalance = useStore((state) => state.aidaBalance);
+
+  // Check balances
+  useEffect(() => {
+    const hasMinXRP = Number(xrpBalance) >= MIN_XRP_BALANCE;
+    const hasMinAIDA = Number(aidaBalance) >= MIN_AIDA_BALANCE;
+    setHasEnoughBalance(hasMinXRP || hasMinAIDA);
+  }, [xrpBalance, aidaBalance]);
+
   return (
     <>
       <div
@@ -179,16 +193,28 @@ const EditViewButtons = memo(
     const { t } = useTranslation();
     const generating = useStore.getState().generating;
     const advancedMode = useStore((state) => state.advancedMode);
+    
+    // Get balances from store
+    const xrpBalance = Number(useStore((state) => state.xrpBalance));
+    const aidaBalance = Number(useStore((state) => state.aidaBalance));
+    
+    // Check if balances are sufficient
+    const hasEnoughBalance = xrpBalance >= MIN_XRP_BALANCE || aidaBalance >= MIN_AIDA_BALANCE;
+    
+    // Error message for insufficient balance
+    const balanceError = !hasEnoughBalance ? 
+      `Insufficient balance. Need Minimum${MIN_XRP_BALANCE} XRP or ${MIN_AIDA_BALANCE} AIDA` : '';
 
     return (
-      <div className='flex'>
+      <div className='flex flex-col'>
         <div className='flex-1 text-center mt-2 flex justify-center'>
           {sticky && (
             <button
               className={`mr-2 btn-primary p-2 ${
-                generating ? 'cursor-not-allowed opacity-40' : ''
+                !hasEnoughBalance || generating ? 'cursor-not-allowed opacity-40' : ''
               }`}
               onClick={handleGenerate}
+              disabled={!hasEnoughBalance || generating}
               aria-label={t('generate') as string}
             >
               <div className='flex items-center justify-center gap-2'>
@@ -201,8 +227,9 @@ const EditViewButtons = memo(
             <button
               className='btn relative mr-2 btn-primary'
               onClick={() => {
-                !generating && setIsModalOpen(true);
+                !generating && hasEnoughBalance && setIsModalOpen(true);
               }}
+              disabled={!hasEnoughBalance}
             >
               <div className='flex items-center justify-center gap-2'>
                 {t('generate')}
@@ -213,9 +240,7 @@ const EditViewButtons = memo(
           <button
             className={`btn relative mr-2 ${
               sticky
-                ? `btn-neutral ${
-                    generating ? 'cursor-not-allowed opacity-40' : ''
-                  }`
+                ? `btn-neutral ${generating ? 'cursor-not-allowed opacity-40' : ''}`
                 : 'btn-neutral'
             }`}
             onClick={handleSave}
@@ -225,6 +250,8 @@ const EditViewButtons = memo(
               {t('save')}
             </div>
           </button>
+
+          <CommandPrompt _setContent={_setContent} />
 
           {sticky || (
             <button
@@ -238,8 +265,15 @@ const EditViewButtons = memo(
             </button>
           )}
         </div>
+        
+        {/* Show balance error message */}
+        {balanceError && (
+          <div className="text-red-500 text-sm mt-2 text-center">
+            {balanceError}
+          </div>
+        )}
+        
         {sticky && advancedMode && <TokenCount />}
-        <CommandPrompt _setContent={_setContent} />
       </div>
     );
   }

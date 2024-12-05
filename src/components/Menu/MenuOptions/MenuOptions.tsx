@@ -52,6 +52,7 @@ const MenuOptions = () => {
         setWalletAddress(storedWallet.address);
         setSeed(storedWallet.seed);
         setWallet(loadedWallet);
+        useStore.getState().setWallet(loadedWallet);
       } catch (err) {
         console.error('Failed to load wallet:', err);
       }
@@ -67,6 +68,9 @@ const MenuOptions = () => {
         console.log('Fetching balances for wallet:', walletAddress);
         const balances = await getBalances(walletAddress);
         console.log('Received balances:', balances);
+        
+        useStore.getState().setXrpBalance(balances.xrp.toString());
+        useStore.getState().setAidaBalance(balances.aida.toString());
         
         setXrpBalance(balances.xrp.toString());
         setAidaBalance(balances.aida.toString());
@@ -124,6 +128,7 @@ const MenuOptions = () => {
       setWalletAddress(address);
       setSeed(seed);
       setWallet(newWallet);
+      useStore.getState().setWallet(newWallet);
       saveWallet({ address, seed });
       setIsWalletModalOpen(false);
     } catch (err) {

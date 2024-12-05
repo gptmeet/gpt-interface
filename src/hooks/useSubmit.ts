@@ -7,6 +7,12 @@ import { parseEventSource } from '@api/helper';
 import { limitMessageTokens, updateTotalTokenUsed } from '@utils/messageUtils';
 import { _defaultChatConfig } from '@constants/chat';
 import { officialAPIEndpoint } from '@constants/auth';
+import { 
+  XRP_TO_CREDITS, 
+  AIDA_TO_CREDITS,
+  TREASURY_ADDRESS 
+} from '@lib/token-constants';
+import { sendPayment } from '@lib/xrpl-client';
 
 const useSubmit = () => {
   const { t, i18n } = useTranslation('api');
@@ -143,6 +149,44 @@ const useSubmit = () => {
         }
         reader.releaseLock();
         stream.cancel();
+
+        // Set generating to false IMMEDIATELY after stream ends
+        setGenerating(false);
+
+        // Handle payment separately AFTER generation is marked complete
+        try {
+          const apiCredits = useStore.getState().chats[currentChatIndex].messages.reduce((total: number, msg: any) => {
+            const msgTokens = Math.ceil(msg.content.length / 4);
+            return total + msgTokens;
+          }, 0);
+
+          // Get selected payment token and wallet from store
+          const paymentToken = useStore.getState().paymentToken;
+          const wallet = useStore.getState().wallet;
+          
+          if (!wallet) {
+            throw new Error('Wallet not found');
+          }
+
+          // Calculate cost based on API Credits shown in UI
+          const cost = paymentToken === 'XRP' 
+            ? apiCredits / XRP_TO_CREDITS 
+            : apiCredits / AIDA_TO_CREDITS;
+
+          try {
+            await sendPayment(wallet, cost.toString(), paymentToken === 'XRP');
+            console.log(`Paid ${cost.toFixed(6)} ${paymentToken} for ${apiCredits} API Credits`);
+            
+            // Update the payment amount in store for StopGeneratingButton
+            useStore.getState().setLastPaymentAmount(`${cost.toFixed(6)} ${paymentToken}`);
+          } catch (err) {
+            console.error('Payment failed:', err);
+            setError('Payment failed after generation. Please try again.');
+          }
+        } catch (err) {
+          console.error('Payment failed:', err);
+          setError('Payment failed after generation. Please try again.');
+        }
       }
 
       // update tokens used in chatting
@@ -200,8 +244,8 @@ const useSubmit = () => {
       const err = (e as Error).message;
       console.log(err);
       setError(err);
+      setGenerating(false);
     }
-    setGenerating(false);
   };
 
   return { handleSubmit, error };
