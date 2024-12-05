@@ -29,13 +29,14 @@ const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || undefined;
 const MenuOptions = () => {
   const hideMenuOptions = useStore((state) => state.hideMenuOptions);
   const countTotalTokens = useStore((state) => state.countTotalTokens);
+  const setPaymentToken = useStore((state) => state.setPaymentToken);
+  const paymentToken = useStore((state) => state.paymentToken);
 
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [xrpBalance, setXrpBalance] = useState('0.00');
   const [xrpUsdValue, setXrpUsdValue] = useState('0.00');
   const [aidaBalance, setAidaBalance] = useState('0.00');
   const [aidaUsdValue, setAidaUsdValue] = useState('0.00');
-  const [paymentToken, setPaymentToken] = useState<'XRP' | 'AIDA'>('XRP');
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
@@ -115,7 +116,8 @@ const MenuOptions = () => {
   };
 
   const togglePaymentToken = () => {
-    setPaymentToken(prev => prev === 'XRP' ? 'AIDA' : 'XRP');
+    const newToken = paymentToken === 'XRP' ? 'AIDA' : 'XRP';
+    setPaymentToken(newToken);
   };
 
   const handleCreateOrImportWallet = () => {

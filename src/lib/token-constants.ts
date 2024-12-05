@@ -5,8 +5,8 @@ export const XRP_LOGO_URL = 'https://thegivingblock.com/wp-content/uploads/2023/
 export const AIDA_LOGO_URL = 'https://cdn.freebiesupply.com/logos/large/2x/ai-logo-png-transparent.png';
 
 // API Credit conversion rates
-export const XRP_TO_CREDITS = 100_000;  // 1 XRP = 100,000 credits
-export const AIDA_TO_CREDITS = 200_000; // 1 AIDA = 200,000 credits
+export const XRP_TO_CREDITS = 10_000;  // 1 XRP = 80,000 credits
+export const AIDA_TO_CREDITS = 1_000; // Example: 1 AIDA = 200,000 credits
 
 // Token prices (in USD)
 export const XRP_USD_RATE = 0.5;  // $0.50 per XRP

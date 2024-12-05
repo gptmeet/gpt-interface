@@ -1,93 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import useStore from '@store/store';
 
-type ButtonState = 'generating' | 'paying' | 'complete' | 'error' | 'none';
+type ButtonState = 'generating' | 'none';
 
 const StopGeneratingButton = () => {
   const setGenerating = useStore((state) => state.setGenerating);
   const generating = useStore((state) => state.generating);
   const error = useStore((state) => state.error);
-  const [buttonState, setButtonState] = useState<ButtonState>('none');
-  const [paymentAmount, setPaymentAmount] = useState<string>('');
   const lastPaymentAmount = useStore((state) => state.lastPaymentAmount);
+  const [buttonState, setButtonState] = useState<ButtonState>('none');
+  const [paymentState, setPaymentState] = useState<'none' | 'paying' | 'complete' | 'error'>('none');
 
   useEffect(() => {
     if (generating) {
       setButtonState('generating');
-    } else if (buttonState === 'generating') {
-      setButtonState('paying');
-      
-      setTimeout(() => {
-        if (error?.includes('Payment failed')) {
-          setButtonState('error');
-          setTimeout(() => {
-            setButtonState('none');
-          }, 2000);
-        }
-      }, 100);
+    } else {
+      setButtonState('none');
     }
-  }, [generating, error]);
+  }, [generating]);
 
-  // Listen for successful payment
   useEffect(() => {
-    if (buttonState === 'paying' && !generating && !error) {
-      setTimeout(() => {
-        setButtonState('complete');
-        setPaymentAmount(lastPaymentAmount);
+    if (!generating && buttonState === 'none') {
+      setPaymentState('paying');
+      
+      if (error?.includes('Payment failed')) {
+        setPaymentState('error');
+        setTimeout(() => setPaymentState('none'), 5000);
+      } else {
         setTimeout(() => {
-          setButtonState('none');
-        }, 2000);
-      }, 500);
+          setPaymentState('complete');
+          setTimeout(() => setPaymentState('none'), 5000);
+        }, 500);
+      }
     }
-  }, [buttonState, generating, error, lastPaymentAmount]);
-
-  const getButtonStyle = () => {
-    switch (buttonState) {
-      case 'generating':
-        return 'bg-red-500';
-      case 'paying':
-        return 'bg-yellow-500';
-      case 'complete':
-        return 'bg-green-500';
-      case 'error':
-        return 'bg-red-500';
-      default:
-        return '';
-    }
-  };
-
-  const getButtonText = () => {
-    switch (buttonState) {
-      case 'generating':
-        return 'Stop generating';
-      case 'paying':
-        return 'Paying...';
-      case 'complete':
-        return `${paymentAmount} Spent`;
-      case 'error':
-        return 'Payment Failed';
-      default:
-        return '';
-    }
-  };
-
-  if (buttonState === 'none') return null;
+  }, [generating, buttonState, error]);
 
   return (
-    <div className='absolute bottom-6 left-0 right-0 m-auto flex md:w-full md:m-auto gap-0 md:gap-2 justify-center'>
-      <button
-        className={`btn relative btn-neutral border-0 md:border ${
-          buttonState === 'paying' || buttonState === 'error' ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
-        onClick={() => buttonState === 'generating' && setGenerating(false)}
-        disabled={buttonState !== 'generating'}
-      >
-        <div className='flex w-full items-center justify-center gap-2'>
-          <div className={`w-3 h-3 ${getButtonStyle()} rounded-sm`} />
-          {getButtonText()}
+    <>
+      {buttonState === 'generating' && (
+        <div className='absolute bottom-6 left-0 right-0 m-auto flex md:w-full md:m-auto gap-0 md:gap-2 justify-center'>
+          <button
+            className="btn relative btn-neutral border-0 md:border"
+            onClick={() => setGenerating(false)}
+          >
+            <div className='flex w-full items-center justify-center gap-2'>
+              <div className="w-3 h-3 bg-red-500 rounded-sm" />
+              Stop generating
+            </div>
+          </button>
         </div>
-      </button>
-    </div>
+      )}
+
+      {paymentState !== 'none' && (
+        <div className='absolute bottom-6 left-0 right-0 m-auto flex md:w-full md:m-auto gap-0 md:gap-2 justify-center'>
+          <button className="btn relative btn-neutral border-0 md:border cursor-default">
+            <div className='flex w-full items-center justify-center gap-2'>
+              <div className={`w-3 h-3 ${
+                paymentState === 'paying' ? 'bg-yellow-500' :
+                paymentState === 'complete' ? 'bg-green-500' :
+                'bg-red-500'
+              } rounded-sm`} />
+              <span className="text-white">
+                {paymentState === 'paying' ? 'Processing payment...' :
+                 paymentState === 'complete' ? `${lastPaymentAmount} Spent` :
+                 'Payment Failed'}
+              </span>
+            </div>
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 

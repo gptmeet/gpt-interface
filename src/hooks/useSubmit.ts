@@ -168,7 +168,7 @@ const useSubmit = () => {
             throw new Error('Wallet not found');
           }
 
-          // Calculate cost based on API Credits shown in UI
+          // Calculate cost based on selected token
           const cost = paymentToken === 'XRP' 
             ? apiCredits / XRP_TO_CREDITS 
             : apiCredits / AIDA_TO_CREDITS;

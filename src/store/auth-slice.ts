@@ -18,6 +18,7 @@ export interface AuthSlice {
   setAidaBalance: (balance: string) => void;
   setWallet: (wallet: Wallet | null) => void;
   setLastPaymentAmount: (amount: string) => void;
+  setPaymentToken: (token: 'XRP' | 'AIDA') => void;
 }
 
 export const createAuthSlice: StoreSlice<AuthSlice> = (set, get) => ({
@@ -69,6 +70,12 @@ export const createAuthSlice: StoreSlice<AuthSlice> = (set, get) => ({
     set((prev: AuthSlice) => ({
       ...prev,
       lastPaymentAmount: amount,
+    }));
+  },
+  setPaymentToken: (token: 'XRP' | 'AIDA') => {
+    set((prev: AuthSlice) => ({
+      ...prev,
+      paymentToken: token,
     }));
   },
 });
