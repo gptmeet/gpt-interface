@@ -12,7 +12,7 @@ const ApiMenu = ({ setIsModalOpen }: Props) => {
   useEffect(() => {
     // Load API key on component mount
     const storedKey = localStorage.getItem('apiKey');
-    setApiKey(storedKey || import.meta.env.VITE_OPENAI_API_KEY || '');
+    setApiKey(storedKey || '');
   }, []);
 
   const handleSave = () => {
@@ -26,7 +26,7 @@ const ApiMenu = ({ setIsModalOpen }: Props) => {
   };
 
   const handleReset = () => {
-    const defaultKey = import.meta.env.VITE_OPENAI_API_KEY || '';
+    const defaultKey = '';
     setApiKey(defaultKey);
     localStorage.removeItem('apiKey');
   };

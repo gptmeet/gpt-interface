@@ -9,11 +9,11 @@ const Config = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>(() => {
     const storedKey = localStorage.getItem('apiKey');
-    return storedKey || import.meta.env.VITE_OPENAI_API_KEY || '';
+    return storedKey || '';
   });
 
   const resetToDefault = () => {
-    const defaultKey = import.meta.env.VITE_OPENAI_API_KEY || '';
+    const defaultKey = '';
     setApiKey(defaultKey);
     localStorage.removeItem('apiKey');
   };
