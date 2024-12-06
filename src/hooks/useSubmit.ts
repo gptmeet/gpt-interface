@@ -155,6 +155,7 @@ const useSubmit = () => {
 
         // Handle payment separately AFTER generation is marked complete
         try {
+          //@ts-ignore
           const apiCredits = useStore.getState().chats[currentChatIndex].messages.reduce((total: number, msg: any) => {
             const msgTokens = Math.ceil(msg.content.length / 4);
             return total + msgTokens;

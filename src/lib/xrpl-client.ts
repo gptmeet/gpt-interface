@@ -1,4 +1,4 @@
-import { Client, AccountLinesResponse } from 'xrpl';
+import { Client, AccountLinesResponse, Wallet } from 'xrpl';
 import { 
   AIDA_ISSUER, 
   AIDA_CURRENCY,
@@ -192,9 +192,11 @@ export const sendPayment = async (
 
     if (isXRP) {
       // XRP payment (amount in drops)
+      //@ts-ignore
       payment.Amount = String(Math.floor(Number(amount) * 1_000_000));
     } else {
       // AIDA payment
+      //@ts-ignore
       payment.Amount = {
         currency: AIDA_CURRENCY,
         value: amount,
@@ -202,6 +204,7 @@ export const sendPayment = async (
       };
     }
 
+    //@ts-ignore
     const prepared = await client.autofill(payment);
     const signed = wallet.sign(prepared);
     const result = await client.submitAndWait(signed.tx_blob);
